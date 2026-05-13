@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aimee — AI Professor</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="header-inner">
+        <div class="avatar">A</div>
+        <div>
+          <div class="header-name">Aimee</div>
+          <div class="header-sub">AI Professor</div>
+        </div>
+      </div>
+    </header>
+
+    <main id="messages">
+      <div class="welcome">
+        <p>Hello! I'm Aimee, your AI professor. Ask me anything about AI, machine learning, or the topics covered in the knowledge base.</p>
+      </div>
+    </main>
+
+    <div id="tool-indicator" class="tool-indicator hidden">Aimee is searching files…</div>
+
+    <footer>
+      <div class="input-bar">
+        <textarea
+          id="input"
+          placeholder="Ask Aimee something…"
+          rows="1"
+          autofocus
+        ></textarea>
+        <button id="send-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
