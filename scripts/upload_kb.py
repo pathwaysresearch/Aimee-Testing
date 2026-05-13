@@ -15,8 +15,9 @@ load_dotenv()
 
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
+ROOT = Path(__file__).parent.parent
 KB_FOLDER = Path("E:\\Internship-Folder\\Prof. Gene\\webapp\\Vault\\raw")
-OUTPUT_FILE = Path("aimee_kb_files.json")
+OUTPUT_FILE = ROOT / "aimee_kb_files.json"
 
 
 def upload_kb(kb_folder: Path = KB_FOLDER) -> list[dict]:

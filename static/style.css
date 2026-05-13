@@ -161,6 +161,13 @@ textarea::placeholder { color: #aaa; }
 #send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 #send-btn svg { width: 16px; height: 16px; }
 
+/* Error bubble */
+.bubble.error {
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #f5c6c6;
+}
+
 /* Cursor blink for streaming */
 .cursor::after {
   content: "▍";

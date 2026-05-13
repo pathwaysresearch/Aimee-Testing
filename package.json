@@ -1,0 +1,16 @@
+{
+  "name": "aimee-agent",
+  "private": true,
+  "devDependencies": {
+    "jest": "^29",
+    "jest-environment-jsdom": "^29"
+  },
+  "scripts": {
+    "test:frontend": "jest"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": ["**/tests/*.test.js"],
+    "setupFiles": ["./tests/setup.js"]
+  }
+}
