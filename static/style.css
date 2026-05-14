@@ -101,15 +101,12 @@ main {
   padding: 0 4px;
 }
 
-/* Tool indicator */
-.tool-indicator {
-  text-align: center;
+/* Inline tool activity lines inside the Aimee bubble */
+.tool-line {
   font-size: 12px;
-  color: #aaa;
-  padding: 4px 0 8px;
-  flex-shrink: 0;
+  color: #888;
+  margin-bottom: 4px;
 }
-.tool-indicator.hidden { display: none; }
 
 /* Footer / input */
 footer {

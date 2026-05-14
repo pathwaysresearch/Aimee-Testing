@@ -15,9 +15,6 @@ const {
 beforeEach(() => {
   document.getElementById("messages").innerHTML =
     '<div class="welcome"><p>Hello</p></div>';
-  document.getElementById("tool-indicator").className =
-    "tool-indicator hidden";
-  document.getElementById("tool-indicator").textContent = "";
   document.getElementById("input").disabled = false;
   document.getElementById("send-btn").disabled = false;
 });
@@ -111,20 +108,18 @@ test("handleSSEEvent - token replaces existing bubble text", () => {
   expect(bubble.textContent).toBe("new text");
 });
 
-test("handleSSEEvent - tool start shows indicator with tool name", () => {
+test("handleSSEEvent - tool start appends tool-line inside bubble", () => {
   const bubble = makeBubble();
-  const indicator = document.getElementById("tool-indicator");
   handleSSEEvent({ type: "tool", name: "web_search", done: false }, bubble);
-  expect(indicator.textContent).toContain("web_search");
-  expect(indicator.classList.contains("hidden")).toBe(false);
+  const line = bubble.querySelector(".tool-line");
+  expect(line).not.toBeNull();
+  expect(line.textContent).toContain("web_search");
 });
 
-test("handleSSEEvent - tool done hides indicator", () => {
+test("handleSSEEvent - tool done event does not add tool-line", () => {
   const bubble = makeBubble();
-  const indicator = document.getElementById("tool-indicator");
-  indicator.classList.remove("hidden");
   handleSSEEvent({ type: "tool", name: "", done: true }, bubble);
-  expect(indicator.classList.contains("hidden")).toBe(true);
+  expect(bubble.querySelector(".tool-line")).toBeNull();
 });
 
 test("handleSSEEvent - error removes bubble and shows error bubble, re-enables input", () => {
@@ -141,15 +136,12 @@ test("handleSSEEvent - error removes bubble and shows error bubble, re-enables i
   expect(document.getElementById("input").disabled).toBe(false);
 });
 
-test("handleSSEEvent - done hides indicator and re-enables input", () => {
+test("handleSSEEvent - done re-enables input", () => {
   const bubble = makeBubble();
-  const indicator = document.getElementById("tool-indicator");
-  indicator.classList.remove("hidden");
   setDisabled(true);
 
   handleSSEEvent({ type: "done" }, bubble);
 
-  expect(indicator.classList.contains("hidden")).toBe(true);
   expect(document.getElementById("input").disabled).toBe(false);
 });
 

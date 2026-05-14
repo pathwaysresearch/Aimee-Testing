@@ -4,7 +4,6 @@ let isStreaming = false;
 const messagesEl = document.getElementById("messages");
 const inputEl = document.getElementById("input");
 const sendBtn = document.getElementById("send-btn");
-const toolIndicator = document.getElementById("tool-indicator");
 
 // Auto-grow textarea
 inputEl.addEventListener("input", () => {
@@ -75,6 +74,14 @@ function addErrorBubble(text) {
   scrollToBottom();
 }
 
+function appendToolLine(bubble, text) {
+  const line = document.createElement("div");
+  line.className = "tool-line";
+  line.textContent = text;
+  bubble.appendChild(line);
+  scrollToBottom();
+}
+
 function handleSSEEvent(evt, bubble) {
   if (evt.type === "session_id") {
     sessionId = evt.value;
@@ -84,21 +91,16 @@ function handleSSEEvent(evt, bubble) {
     scrollToBottom();
 
   } else if (evt.type === "tool") {
-    if (evt.done) {
-      toolIndicator.classList.add("hidden");
-    } else {
-      toolIndicator.textContent = `Using ${evt.name}…`;
-      toolIndicator.classList.remove("hidden");
+    if (!evt.done) {
+      appendToolLine(bubble, `⚡ Using ${evt.name}…`);
     }
 
   } else if (evt.type === "error") {
     bubble.remove();
     addErrorBubble(evt.text || "An error occurred.");
-    toolIndicator.classList.add("hidden");
     setDisabled(false);
 
   } else if (evt.type === "done") {
-    toolIndicator.classList.add("hidden");
     setDisabled(false);
   }
 }
@@ -128,8 +130,7 @@ async function send() {
   messagesEl.appendChild(msgEl);
   scrollToBottom();
 
-  toolIndicator.textContent = "Aimee is thinking…";
-  toolIndicator.classList.remove("hidden");
+  appendToolLine(bubble, "Aimee is thinking…");
 
   try {
     const res = await fetch("/chat", {
@@ -140,7 +141,6 @@ async function send() {
 
     if (!res.ok) {
       bubble.textContent = "Something went wrong. Please try again.";
-      toolIndicator.classList.add("hidden");
       setDisabled(false);
       return;
     }
@@ -170,7 +170,6 @@ async function send() {
     }
   } catch (err) {
     bubble.textContent = "Connection error. Please try again.";
-    toolIndicator.classList.add("hidden");
     setDisabled(false);
   }
 }
