@@ -93,22 +93,22 @@ test("setDisabled(false) - enables input and button", () => {
 
 function makeBubble(extraClass = "") {
   const el = document.createElement("div");
-  el.className = "bubble cursor" + (extraClass ? " " + extraClass : "");
+  el.className = "bubble" + (extraClass ? " " + extraClass : "");
   document.getElementById("messages").appendChild(el);
   return el;
 }
 
-test("handleSSEEvent - token appends text to bubble", () => {
+test("handleSSEEvent - token sets text on bubble", () => {
   const bubble = makeBubble();
-  handleSSEEvent({ type: "token", text: "Hello" }, bubble);
-  expect(bubble.textContent).toBe("Hello");
+  handleSSEEvent({ type: "token", text: "Hello, world!" }, bubble);
+  expect(bubble.textContent).toBe("Hello, world!");
 });
 
-test("handleSSEEvent - token removes cursor class", () => {
+test("handleSSEEvent - token replaces existing bubble text", () => {
   const bubble = makeBubble();
-  expect(bubble.classList.contains("cursor")).toBe(true);
-  handleSSEEvent({ type: "token", text: "Hi" }, bubble);
-  expect(bubble.classList.contains("cursor")).toBe(false);
+  bubble.textContent = "old text";
+  handleSSEEvent({ type: "token", text: "new text" }, bubble);
+  expect(bubble.textContent).toBe("new text");
 });
 
 test("handleSSEEvent - tool start shows indicator with tool name", () => {
@@ -133,7 +133,7 @@ test("handleSSEEvent - error removes bubble and shows error bubble, re-enables i
   handleSSEEvent({ type: "error", text: "API error" }, bubble);
 
   // Original bubble gone
-  expect(document.querySelector(".bubble.cursor")).toBeNull();
+  expect(document.querySelector(".bubble:not(.error)")).toBeNull();
   // Error bubble present
   expect(document.querySelector(".bubble.error")).not.toBeNull();
   expect(document.querySelector(".bubble.error").textContent).toBe("API error");
@@ -141,7 +141,7 @@ test("handleSSEEvent - error removes bubble and shows error bubble, re-enables i
   expect(document.getElementById("input").disabled).toBe(false);
 });
 
-test("handleSSEEvent - done removes cursor, hides indicator, re-enables input", () => {
+test("handleSSEEvent - done hides indicator and re-enables input", () => {
   const bubble = makeBubble();
   const indicator = document.getElementById("tool-indicator");
   indicator.classList.remove("hidden");
@@ -149,7 +149,6 @@ test("handleSSEEvent - done removes cursor, hides indicator, re-enables input", 
 
   handleSSEEvent({ type: "done" }, bubble);
 
-  expect(bubble.classList.contains("cursor")).toBe(false);
   expect(indicator.classList.contains("hidden")).toBe(true);
   expect(document.getElementById("input").disabled).toBe(false);
 });

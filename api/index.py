@@ -1,7 +1,7 @@
 import json
 import sys
 from pathlib import Path
-from flask import Flask, Response, render_template, request, stream_with_context
+from flask import Flask, render_template, request, stream_with_context
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
@@ -19,11 +19,6 @@ def sse(data: dict) -> str:
     return f"data: {json.dumps(data)}\n\n"
 
 
-def stream_response(message: str, session_id: str | None):
-    for evt in stream_events(message, session_id):
-        yield sse(evt)
-
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -38,14 +33,15 @@ def chat():
     if not message:
         return {"error": "empty message"}, 400
 
-    return Response(
-        stream_with_context(stream_response(message, session_id)),
-        mimetype="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
-    )
+    def generate():
+        for evt in stream_events(message, session_id):
+            yield sse(evt)
+
+    return stream_with_context(generate()), {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+    }
 
 
 if __name__ == "__main__":

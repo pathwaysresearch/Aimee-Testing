@@ -80,8 +80,7 @@ function handleSSEEvent(evt, bubble) {
     sessionId = evt.value;
 
   } else if (evt.type === "token") {
-    bubble.classList.remove("cursor");
-    bubble.textContent += evt.text;
+    bubble.textContent = evt.text;
     scrollToBottom();
 
   } else if (evt.type === "tool") {
@@ -99,7 +98,6 @@ function handleSSEEvent(evt, bubble) {
     setDisabled(false);
 
   } else if (evt.type === "done") {
-    bubble.classList.remove("cursor");
     toolIndicator.classList.add("hidden");
     setDisabled(false);
   }
@@ -115,9 +113,6 @@ async function send() {
 
   addMessage("user", message);
 
-  const welcome = messagesEl.querySelector(".welcome");
-  if (welcome) welcome.remove();
-
   const msgEl = document.createElement("div");
   msgEl.className = "msg aimee";
 
@@ -126,7 +121,7 @@ async function send() {
   label.textContent = "Aimee";
 
   const bubble = document.createElement("div");
-  bubble.className = "bubble cursor";
+  bubble.className = "bubble";
 
   msgEl.appendChild(label);
   msgEl.appendChild(bubble);
@@ -144,7 +139,6 @@ async function send() {
     });
 
     if (!res.ok) {
-      bubble.classList.remove("cursor");
       bubble.textContent = "Something went wrong. Please try again.";
       toolIndicator.classList.add("hidden");
       setDisabled(false);
@@ -175,7 +169,6 @@ async function send() {
       }
     }
   } catch (err) {
-    bubble.classList.remove("cursor");
     bubble.textContent = "Connection error. Please try again.";
     toolIndicator.classList.add("hidden");
     setDisabled(false);

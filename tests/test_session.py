@@ -44,6 +44,16 @@ def _make_tool_result_event():
     return _make_event("agent.tool_result")
 
 
+def _make_mcp_tool_use_event(name="brave_search"):
+    evt = _make_event("agent.mcp_tool_use")
+    evt.name = name
+    return evt
+
+
+def _make_mcp_tool_result_event():
+    return _make_event("agent.mcp_tool_result")
+
+
 def _make_error_event(message="Oops"):
     err = MagicMock()
     err.message = message
@@ -138,6 +148,28 @@ def test_tool_use_yields_start(config_files):
 
 def test_tool_result_yields_done(config_files):
     events = [_make_tool_result_event()]
+    with _mock_session(events, session_id="s1"):
+        import run_session
+        results = list(run_session.stream_events("hi", session_id="s1"))
+
+    tool_evts = [e for e in results if e["type"] == "tool"]
+    assert len(tool_evts) == 1
+    assert tool_evts[0] == {"type": "tool", "name": "", "done": True}
+
+
+def test_mcp_tool_use_yields_start(config_files):
+    events = [_make_mcp_tool_use_event("brave_search")]
+    with _mock_session(events, session_id="s1"):
+        import run_session
+        results = list(run_session.stream_events("hi", session_id="s1"))
+
+    tool_evts = [e for e in results if e["type"] == "tool"]
+    assert len(tool_evts) == 1
+    assert tool_evts[0] == {"type": "tool", "name": "brave_search", "done": False}
+
+
+def test_mcp_tool_result_yields_done(config_files):
+    events = [_make_mcp_tool_result_event()]
     with _mock_session(events, session_id="s1"):
         import run_session
         results = list(run_session.stream_events("hi", session_id="s1"))

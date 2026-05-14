@@ -167,10 +167,3 @@ textarea::placeholder { color: #aaa; }
   color: #c62828;
   border: 1px solid #f5c6c6;
 }
-
-/* Cursor blink for streaming */
-.cursor::after {
-  content: "▍";
-  animation: blink 0.7s step-end infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }

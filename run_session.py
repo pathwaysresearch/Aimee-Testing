@@ -77,6 +77,12 @@ def stream_events(message: str, session_id: str | None = None):
             elif event.type == "agent.tool_result":
                 yield {"type": "tool", "name": "", "done": True}
 
+            elif event.type == "agent.mcp_tool_use":
+                yield {"type": "tool", "name": event.name, "done": False}
+
+            elif event.type == "agent.mcp_tool_result":
+                yield {"type": "tool", "name": "", "done": True}
+
             elif event.type == "session.error":
                 msg = getattr(getattr(event, "error", None), "message", "Unknown error")
                 yield {"type": "error", "text": msg}
