@@ -74,20 +74,25 @@ function addErrorBubble(text) {
   scrollToBottom();
 }
 
+function _createToolLine(bubble, text) {
+  const line = document.createElement("div");
+  line.className = "tool-line";
+  line.textContent = text;
+  bubble.appendChild(line);
+  scrollToBottom();
+}
+
 function setToolLine(bubble, text) {
-  let line = bubble.querySelector(".tool-line");
-  if (!line) {
-    line = document.createElement("div");
-    line.className = "tool-line";
-    bubble.appendChild(line);
-    line.textContent = text;
+  const existing = bubble.querySelector(".tool-line");
+  if (existing) {
+    existing.classList.add("fade-out");
+    clearTimeout(existing._t);
+    existing._t = setTimeout(() => {
+      existing.remove();
+      _createToolLine(bubble, text);
+    }, 250);
   } else {
-    line.classList.add("fade-out");
-    clearTimeout(line._t);
-    line._t = setTimeout(() => {
-      line.textContent = text;
-      line.classList.remove("fade-out");
-    }, 200);
+    _createToolLine(bubble, text);
   }
   scrollToBottom();
 }
