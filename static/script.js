@@ -74,11 +74,21 @@ function addErrorBubble(text) {
   scrollToBottom();
 }
 
-function appendToolLine(bubble, text) {
-  const line = document.createElement("div");
-  line.className = "tool-line";
-  line.textContent = text;
-  bubble.appendChild(line);
+function setToolLine(bubble, text) {
+  let line = bubble.querySelector(".tool-line");
+  if (!line) {
+    line = document.createElement("div");
+    line.className = "tool-line";
+    bubble.appendChild(line);
+    line.textContent = text;
+  } else {
+    line.classList.add("fade-out");
+    clearTimeout(line._t);
+    line._t = setTimeout(() => {
+      line.textContent = text;
+      line.classList.remove("fade-out");
+    }, 200);
+  }
   scrollToBottom();
 }
 
@@ -87,12 +97,14 @@ function handleSSEEvent(evt, bubble) {
     sessionId = evt.value;
 
   } else if (evt.type === "token") {
+    const line = bubble.querySelector(".tool-line");
+    if (line) clearTimeout(line._t);
     bubble.textContent = evt.text;
     scrollToBottom();
 
   } else if (evt.type === "tool") {
     if (!evt.done) {
-      appendToolLine(bubble, `⚡ Using ${evt.name}…`);
+      setToolLine(bubble, `⚡ Using ${evt.name}…`);
     }
 
   } else if (evt.type === "error") {
@@ -130,7 +142,7 @@ async function send() {
   messagesEl.appendChild(msgEl);
   scrollToBottom();
 
-  appendToolLine(bubble, "Aimee is thinking…");
+  setToolLine(bubble, "Aimee is thinking…");
 
   try {
     const res = await fetch("/chat", {

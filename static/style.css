@@ -101,12 +101,13 @@ main {
   padding: 0 4px;
 }
 
-/* Inline tool activity lines inside the Aimee bubble */
+/* Single tool activity line inside the Aimee bubble */
 .tool-line {
   font-size: 12px;
   color: #888;
-  margin-bottom: 4px;
+  transition: opacity 0.2s ease;
 }
+.tool-line.fade-out { opacity: 0; }
 
 /* Footer / input */
 footer {

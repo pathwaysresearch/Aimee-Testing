@@ -108,12 +108,19 @@ test("handleSSEEvent - token replaces existing bubble text", () => {
   expect(bubble.textContent).toBe("new text");
 });
 
-test("handleSSEEvent - tool start appends tool-line inside bubble", () => {
+test("handleSSEEvent - tool start shows single tool-line with tool name", () => {
   const bubble = makeBubble();
   handleSSEEvent({ type: "tool", name: "web_search", done: false }, bubble);
-  const line = bubble.querySelector(".tool-line");
-  expect(line).not.toBeNull();
-  expect(line.textContent).toContain("web_search");
+  const lines = bubble.querySelectorAll(".tool-line");
+  expect(lines.length).toBe(1);
+  expect(lines[0].textContent).toContain("web_search");
+});
+
+test("handleSSEEvent - consecutive tool events replace single line not stack", () => {
+  const bubble = makeBubble();
+  handleSSEEvent({ type: "tool", name: "glob", done: false }, bubble);
+  handleSSEEvent({ type: "tool", name: "read", done: false }, bubble);
+  expect(bubble.querySelectorAll(".tool-line").length).toBe(1);
 });
 
 test("handleSSEEvent - tool done event does not add tool-line", () => {
