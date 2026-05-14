@@ -74,6 +74,46 @@ function addErrorBubble(text) {
   scrollToBottom();
 }
 
+function renderMd(text) {
+  if (typeof marked === "undefined") return null;
+  const stash = [];
+  function hide(raw, display) {
+    const id = "\x02" + stash.length + "\x03";
+    stash.push({ id, raw, display });
+    return id;
+  }
+  let s = text.replace(/\$\$([\s\S]+?)\$\$/g,          (_, m) => hide("$$" + m + "$$", true));
+  s = s.replace(/\\\[([\s\S]+?)\\\]/g,                  (_, m) => hide("\\[" + m + "\\]", true));
+  s = s.replace(/\\\(([\s\S]+?)\\\)/g,                  (_, m) => hide("\\(" + m + "\\)", false));
+  s = s.replace(/\$([^\s$\n][^$\n]*?[^\s$\n]|\S)\$/g,  (_, m) => hide("$" + m + "$", false));
+  let html = marked.parse(s, { breaks: true, gfm: true });
+  for (const { id, raw, display } of stash) {
+    const esc = raw.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    html = html.replace(id, `<span class="latex-pending" data-display="${display}" data-raw="${esc}"></span>`);
+  }
+  return html;
+}
+
+function applyKatex(el) {
+  el.querySelectorAll("span.latex-pending").forEach(span => {
+    const display = span.dataset.display === "true";
+    const raw = span.dataset.raw
+      .replace(/&amp;/g,"&").replace(/&lt;/g,"<")
+      .replace(/&gt;/g,">").replace(/&quot;/g,'"');
+    const inner = raw
+      .replace(/^\$\$([\s\S]*)\$\$$/, "$1")
+      .replace(/^\\\[([\s\S]*)\\\]$/, "$1")
+      .replace(/^\\\(([\s\S]*)\\\)$/, "$1")
+      .replace(/^\$([\s\S]*)\$$/, "$1");
+    try {
+      span.outerHTML = katex.renderToString(inner, { displayMode: display, throwOnError: false, trust: false });
+    } catch (e) {
+      span.textContent = raw;
+      span.className = "latex-error";
+    }
+  });
+}
+
 function _createToolLine(bubble, text) {
   const line = document.createElement("div");
   line.className = "tool-line";
@@ -104,7 +144,13 @@ function handleSSEEvent(evt, bubble) {
   } else if (evt.type === "token") {
     const line = bubble.querySelector(".tool-line");
     if (line) clearTimeout(line._t);
-    bubble.textContent = evt.text;
+    const html = renderMd(evt.text);
+    if (html !== null) {
+      bubble.innerHTML = html;
+      applyKatex(bubble);
+    } else {
+      bubble.textContent = evt.text;
+    }
     scrollToBottom();
 
   } else if (evt.type === "tool") {

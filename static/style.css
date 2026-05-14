@@ -92,7 +92,26 @@ main {
   background: #f0f0f0;
   color: #1a1a1a;
   border-bottom-left-radius: 4px;
+  white-space: normal;
 }
+
+/* Markdown rendered content inside Aimee's bubble */
+.msg.aimee .bubble p            { margin-bottom: 0.4em; }
+.msg.aimee .bubble p:last-child { margin-bottom: 0; }
+.msg.aimee .bubble ul,
+.msg.aimee .bubble ol           { padding-left: 20px; margin-bottom: 0.4em; }
+.msg.aimee .bubble li           { margin-bottom: 0.1em; }
+.msg.aimee .bubble code         { font-size: 12px; background: #ddd; padding: 1px 5px; border-radius: 4px; font-family: monospace; }
+.msg.aimee .bubble pre          { background: #1e1e1e; color: #e8e8e8; padding: 10px 12px; border-radius: 8px; overflow-x: auto; margin-bottom: 0.4em; }
+.msg.aimee .bubble pre code     { background: none; padding: 0; color: inherit; }
+.msg.aimee .bubble h1,
+.msg.aimee .bubble h2,
+.msg.aimee .bubble h3           { margin: 0.3em 0 0.1em; font-weight: 600; }
+.msg.aimee .bubble strong       { font-weight: 600; }
+.msg.aimee .bubble em           { font-style: italic; }
+.msg.aimee .bubble blockquote   { border-left: 3px solid #bbb; padding-left: 10px; color: #666; margin: 0.3em 0; }
+.msg.aimee .bubble .katex-display { overflow-x: auto; padding: 4px 0; }
+.latex-error                    { color: #c62828; font-size: 0.85em; }
 
 .msg-label {
   font-size: 11px;
